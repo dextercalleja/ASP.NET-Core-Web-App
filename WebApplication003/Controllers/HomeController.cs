@@ -20,13 +20,15 @@ namespace WebApplication003.Controllers
             //routing
             //localhost://54329/Home/Index
             //localhost://54329
-            return View();
+            var posts = _dbContext.Posts.ToList();
+            return View(posts);
         }
 
-        public IActionResult Post()
+        public IActionResult Post(int id)
         {
+            var post = _dbContext.Posts.FirstOrDefault(p => p.Id == id);
             //localhost://54329/Home/Post
-            return View();
+            return View(post);
         }
 
         [HttpGet]
@@ -41,7 +43,32 @@ namespace WebApplication003.Controllers
             _dbContext.Posts.Add(post);
             await _dbContext.SaveChangesAsync();
 
-            return RedirectToAction(nameof(this.Post));
+            return RedirectToAction(nameof(this.Index));
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var post = _dbContext.Posts.FirstOrDefault(p => p.Id == id);
+            return View(post);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Post post)
+        {
+            _dbContext.Posts.Update(post);
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToAction(nameof(this.Index));
+        }
+
+        public async Task<ActionResult> Remove(int id)
+        {
+            var post = _dbContext.Posts.FirstOrDefault(p => p.Id == id);
+            _dbContext.Posts.Remove(post);
+            await _dbContext.SaveChangesAsync();
+
+           return RedirectToAction(nameof(this.Index));
         }
     }
 }
